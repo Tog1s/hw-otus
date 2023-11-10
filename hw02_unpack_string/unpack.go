@@ -22,7 +22,7 @@ func Unpack(str string) (string, error) {
 		if i == 0 && unicode.IsDigit(value) {
 			return "", ErrInvalidString
 		}
-	
+
 		if isBackslashed {
 			if !(unicode.IsDigit(value) || string(value) == string('\\')) {
 				return "", ErrInvalidString

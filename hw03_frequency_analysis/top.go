@@ -14,15 +14,15 @@ type WordCount struct {
 
 func Top10(inputText string) []string {
 	words := make(map[string]int)
-	text := string(inputText)
+	// text := string(inputText)
 	// matches := regex.FindAllString(text, -1)
-	matches := strings.Fields(text)
+	matches := strings.Fields(inputText)
 
 	for _, match := range matches {
 		words[match]++
 	}
 
-	var wordCounts []WordCount
+	wordCounts := make([]WordCount, 0, len(words))
 	for k, v := range words {
 		wordCounts = append(wordCounts, WordCount{k, v})
 	}
@@ -31,7 +31,7 @@ func Top10(inputText string) []string {
 		return wordCounts[i].Count > wordCounts[j].Count
 	})
 
-	var result = make([]string, 0, len(wordCounts))
+	result := make([]string, 0, len(wordCounts))
 	for i, wc := range wordCounts {
 		result = append(result, wc.Word)
 		if i == 9 {

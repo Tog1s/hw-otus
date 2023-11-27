@@ -14,8 +14,8 @@ type WordCount struct {
 
 func Top10(inputText string) []string {
 	words := make(map[string]int)
-	//text := string(inputText)
-	//matches := regex.FindAllString(text, -1)
+	// text := string(inputText)
+	// matches := regex.FindAllString(text, -1)
 	matches := strings.Fields(inputText)
 
 	for _, match := range matches {

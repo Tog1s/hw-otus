@@ -5,20 +5,20 @@ import (
 	"strings"
 )
 
-// var regex regexp.Regexp = *regexp.MustCompile("[а-яА-Я-]+")
-
 type WordCount struct {
 	Word  string
 	Count int
 }
 
 func Top10(inputText string) []string {
-	words := make(map[string]int)
-	// text := string(inputText)
-	// matches := regex.FindAllString(text, -1)
-	matches := strings.Fields(inputText)
+	text := strings.ToLower(inputText)
+	text = strings.ReplaceAll(text, " - ", "")
+	text = strings.ReplaceAll(text, ".", "")
 
-	for _, match := range matches {
+	allWords := strings.Fields(text)
+
+	words := make(map[string]int)
+	for _, match := range allWords {
 		words[match]++
 	}
 

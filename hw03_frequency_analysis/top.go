@@ -15,7 +15,7 @@ func Top10(inputText string) []string {
 	// text = strings.ReplaceAll(text, " - ", "")
 	// text = strings.ReplaceAll(text, ".", "")
 
-	text := string(inputText)
+	text := inputText
 	allWords := strings.Fields(text)
 
 	words := make(map[string]int)

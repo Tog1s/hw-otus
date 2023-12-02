@@ -11,6 +11,7 @@ type WordCount struct {
 }
 
 func Top10(inputText string) []string {
+	// if taskWithAsteriskIsCompleted = true
 	// text := strings.ToLower(inputText)
 	// text = strings.ReplaceAll(text, " - ", "")
 	// text = strings.ReplaceAll(text, ".", "")

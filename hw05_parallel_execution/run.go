@@ -22,7 +22,6 @@ func Run(tasks []Task, n, m int) error {
 	channel := make(chan Task, len(tasks))
 	for _, task := range tasks {
 		channel <- task
-
 	}
 	close(channel)
 

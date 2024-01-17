@@ -1,4 +1,4 @@
-module github.com/tog1s/hw05_parallel_execution
+module github.com/tog1s/hw-otus/hw05_parallel_execution
 
 go 1.21
 

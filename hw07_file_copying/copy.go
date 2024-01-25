@@ -23,32 +23,10 @@ func progressBarLimit(info os.FileInfo, limit, offset int64) int {
 	return int(limit)
 }
 
-func checkFiles(fromPath, toPath string) error {
-	if fromPath == toPath {
-		return ErrSameFileProvided
-	}
-	return nil
-}
-
-func checkOffset(offset int64, info os.FileInfo) error {
-	if offset > info.Size() {
-		return ErrOffsetExceedsFileSize
-	}
-	return nil
-}
-
-func setLimit(limit int64, info os.FileInfo) int64 {
-	if limit <= 0 {
-		limit = info.Size()
-	}
-	return limit
-}
-
 func Copy(fromPath, toPath string, offset, limit int64) error {
 	// Check files before
-	err := checkFiles(fromPath, toPath)
-	if err != nil {
-		return err
+	if fromPath == toPath {
+		return ErrSameFileProvided
 	}
 
 	// Read source file
@@ -63,12 +41,15 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 	if err != nil {
 		return err
 	}
-	limit = setLimit(limit, fileInfo)
+
+	// Set limit
+	if limit <= 0 {
+		limit = fileInfo.Size()
+	}
 
 	// Check offset limits
-	err = checkOffset(offset, fileInfo)
-	if err != nil {
-		return err
+	if offset > fileInfo.Size() {
+		return ErrOffsetExceedsFileSize
 	}
 
 	// Create target file
@@ -80,10 +61,7 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 
 	// Set offset
 	_, err = sourceFile.Seek(offset, io.SeekStart)
-	if errors.Is(err, io.EOF) {
-		err = nil
-	}
-	if err != nil {
+	if err != nil && !errors.Is(err, io.EOF) {
 		return err
 	}
 

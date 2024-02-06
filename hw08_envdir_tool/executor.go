@@ -18,7 +18,7 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 		cmdEnv = append(cmdEnv, fmt.Sprintf("%s=%s", name, value.Value))
 	}
 
-	cmdRun := exec.Command(cmd[0], cmd[1:]...)
+	cmdRun := exec.Command(cmd[0], cmd[1:]...) //nolint:gosec
 	cmdRun.Env = append(os.Environ(), cmdEnv...)
 	cmdRun.Stdout = os.Stdout
 	cmdRun.Stderr = os.Stderr

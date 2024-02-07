@@ -1,5 +1,10 @@
 package hw09structvalidator
 
+import (
+	"fmt"
+	"reflect"
+)
+
 type ValidationError struct {
 	Field string
 	Err   error
@@ -12,6 +17,16 @@ func (v ValidationErrors) Error() string {
 }
 
 func Validate(v interface{}) error {
-	// Place your code here.
+	st := reflect.ValueOf(v)
+
+	for i := 0; i < st.NumFiled(); i++ {
+		field := st.Field(i)
+		if validateTag, ok := field.Tag.Lookup("validate"); ok {
+			if validateTag != "" {
+				fmt.Println(validateTag)
+			}
+		}
+	}
+
 	return nil
 }

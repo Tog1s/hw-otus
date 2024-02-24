@@ -139,22 +139,18 @@ func validate(field reflect.StructField, value reflect.Value, rules ValidatorMap
 func validateInt(value reflect.Value, rules ValidatorMap) error {
 	for rule, val := range rules {
 		switch rule {
+		case "max":
 		case "min":
 			expected, err := strconv.ParseInt(val, 10, 64)
 			if err != nil {
-				return fmt.Errorf("%w: invalid value min: %s", ErrorValTagValueShouldBeInteger, val)
+				return fmt.Errorf("%w: invalid value %s: %s", ErrorValTagValueShouldBeInteger, rule, val)
 			}
 
 			if value.Int() < expected {
 				return ErrorInputMinLimit
 			}
-		case "max":
-			expected, err := strconv.ParseInt(val, 10, 64)
-			if err != nil {
-				return fmt.Errorf("%w: invalid value max: %s", ErrorValTagValueShouldBeInteger, val)
-			}
 
-			if value.Int() > expected {
+			if rule == "max" && value.Int() > expected {
 				return ErrorInputMaxLimit
 			}
 		case "in":

@@ -33,17 +33,17 @@ var (
 )
 
 func (v ValidationErrors) Error() string {
-	error := strings.Builder{}
+	err := strings.Builder{}
 
 	for _, e := range v {
 		errMessage := e.Err.Error()
-		if error.Len() != 0 {
+		if err.Len() != 0 {
 			errMessage += "\n\t"
 		}
-		error.WriteString(errMessage)
+		err.WriteString(errMessage)
 	}
 
-	return error.String()
+	return err.String()
 }
 
 func Validate(v interface{}) error {

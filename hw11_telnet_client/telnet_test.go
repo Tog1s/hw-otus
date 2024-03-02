@@ -62,4 +62,13 @@ func TestTelnetClient(t *testing.T) {
 
 		wg.Wait()
 	})
+
+	t.Run("server dosen't exist", func(t *testing.T) {
+		in := &bytes.Buffer{}
+		out := &bytes.Buffer{}
+		timeout := 10 * time.Second
+		tc := NewTelnetClient("localhost:4242", timeout, io.NopCloser(in), out)
+
+		require.Error(t, tc.Connect())
+	})
 }

@@ -150,7 +150,7 @@ func validateInt(value reflect.Value, rules ValidatorMap) error {
 				return ErrorInputMinLimit
 			}
 
-			if rule == "max" && value.Int() > expected {
+			if value.Int() > expected {
 				return ErrorInputMaxLimit
 			}
 		case "in":

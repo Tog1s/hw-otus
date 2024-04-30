@@ -1,20 +1,32 @@
 package logger
 
-import "fmt"
+import (
+	"fmt"
+	"io"
 
-type Logger struct { // TODO
+	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/config"
+)
+
+type Logger struct {
 }
 
-func New(level string) *Logger {
+func New(cfg config.Logger, output io.Writer) *Logger {
+
 	return &Logger{}
 }
 
 func (l Logger) Info(msg string) {
-	fmt.Println(msg)
+	fmt.Printf("[INFO] %s", msg)
 }
 
 func (l Logger) Error(msg string) {
-	// TODO
+	fmt.Println(msg)
 }
 
-// TODO
+func (l Logger) Warn(msg string) {
+	fmt.Println(msg)
+}
+
+func (l Logger) Debug(msg string) {
+	fmt.Println(msg)
+}

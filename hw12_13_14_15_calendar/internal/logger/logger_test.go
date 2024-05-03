@@ -4,16 +4,21 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/stretchr/testify/require"
 	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/config"
 )
 
+var testString string = "test message string"
+
 func TestLogger(t *testing.T) {
-	buffer := new(bytes.Buffer)
+	buffer := &bytes.Buffer{}
 	cfg := config.Logger{
 		Level: "INFO",
 	}
-	t.Run("test logger", func(t *testing.T) {
-		log := New(cfg, buffer)
-		log.Info("info message")
+	logger := New(cfg, buffer)
+
+	t.Run("test info", func(t *testing.T) {
+		logger.Info(testString)
+		require.Contains(t, buffer.String(), testString)
 	})
 }

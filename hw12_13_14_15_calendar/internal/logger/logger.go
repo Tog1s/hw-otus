@@ -12,17 +12,30 @@ type AppLogger struct {
 }
 
 func New(cfg config.Logger, output io.Writer) *AppLogger {
-
+	logLevel := parseLogLevel(cfg.Level)
 	opts := &slog.HandlerOptions{
-		Level: slog.LevelDebug,
+		Level: logLevel,
 	}
-
 	handler := slog.NewJSONHandler(output, opts)
 	logger := slog.New(handler)
 
 	return &AppLogger{
 		logger: logger,
 	}
+}
+
+func parseLogLevel(level string) slog.Level {
+	switch level {
+	case "INFO":
+		return slog.LevelInfo
+	case "ERROR":
+		return slog.LevelError
+	case "WARN":
+		return slog.LevelWarn
+	case "DEBUG":
+		return slog.LevelDebug
+	}
+	return slog.LevelInfo
 }
 
 func (l *AppLogger) Info(msg string) {

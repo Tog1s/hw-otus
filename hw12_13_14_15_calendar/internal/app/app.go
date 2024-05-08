@@ -36,6 +36,7 @@ func New(logger Logger, storage Storage) *App {
 	}
 }
 
+//nolint:all
 func (a *App) CreateEvent(ctx context.Context, id, title string) error {
 	// if err := a.storage.Create(&storage.Event{ID: id, Title: tiitle}); err != nil {
 	// 	return err

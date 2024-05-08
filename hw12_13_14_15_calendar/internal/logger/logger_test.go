@@ -8,7 +8,7 @@ import (
 	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/config"
 )
 
-var testMessage string = "test message string"
+var testMessage = "logging test text"
 
 func TestLogger(t *testing.T) {
 	buffer := &bytes.Buffer{}

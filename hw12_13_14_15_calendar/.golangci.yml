@@ -13,6 +13,7 @@ linters-settings:
           - github.com/tog1s
           - github.com/google/uuid
           - github.com/stretchr/testify/require
+          - github.com/jmoiron/sqlx
 
 linters:
   disable-all: true

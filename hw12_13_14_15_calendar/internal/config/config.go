@@ -27,7 +27,7 @@ type Storage struct {
 type DB struct {
 	Host     string
 	Port     string
-	DBName   string
+	DBName   string `yaml:"dbName"`
 	User     string
 	Password string
 }
@@ -46,10 +46,22 @@ func New(path string) (*Config, error) {
 		return nil, fmt.Errorf("error while reading config file %s: %w", path, err)
 	}
 
-	var config *Config
+	config := &Config{}
 	err = yaml.Unmarshal(configData, &config)
 	if err != nil {
 		return nil, fmt.Errorf("error while parse yaml file %s: %w", path, err)
 	}
 	return config, nil
+}
+
+//nolint:unused
+func (db *DB) getDSN() string {
+	return fmt.Sprintf(
+		"postgres://%s:%s@%s:%v/%s?sslmode=disable",
+		db.User,
+		db.Password,
+		db.Host,
+		db.Port,
+		db.DBName,
+	)
 }

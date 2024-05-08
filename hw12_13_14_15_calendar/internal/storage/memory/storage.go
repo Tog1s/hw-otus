@@ -15,7 +15,7 @@ var (
 )
 
 type Storage struct {
-	mu     sync.RWMutex //nolint:unused
+	mu     sync.RWMutex
 	events map[uuid.UUID]*storage.Event
 }
 

@@ -34,12 +34,11 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	logg := logger.New(cfg.Logger, os.Stdout)
 
+	logg := logger.New(cfg.Logger, os.Stdout)
 	storage := memorystorage.New()
 	calendar := app.New(logg, storage)
-
-	server := internalhttp.NewServer(logg, calendar)
+	server := internalhttp.NewServer(logg, calendar, cfg.Server.Host, cfg.Server.Port)
 
 	ctx, cancel := signal.NotifyContext(context.Background(),
 		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)

@@ -1,11 +1,23 @@
 package internalhttp
 
 import (
+	"fmt"
 	"net/http"
+	"time"
 )
 
-func loggingMiddleware(next http.Handler) http.Handler { //nolint:unused
+func loggingMiddleware(next http.Handler, logger Logger) http.HandlerFunc { //nolint:unused
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// TODO
+		requestTime := time.Now()
+		next.ServeHTTP(w, r)
+		logger.Info(fmt.Sprintf(
+			"%s %s %s %d %v %s",
+			r.Method,
+			r.URL.Path,
+			r.Proto,
+			http.StatusOK,
+			time.Since(requestTime),
+			r.UserAgent(),
+		))
 	})
 }

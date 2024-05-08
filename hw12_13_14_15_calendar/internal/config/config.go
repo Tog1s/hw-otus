@@ -3,15 +3,16 @@ package config
 import (
 	"fmt"
 	"os"
+	"time"
 
 	yaml "gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	Logger Logger
-	// Storage Storage
-	// DB DB
-	// Server Server
+	Logger  Logger
+	Storage Storage
+	DB      DB
+	Server  Server
 }
 
 type Logger struct {
@@ -19,11 +20,32 @@ type Logger struct {
 	Output string
 }
 
+type Storage struct {
+	Type string
+}
+
+type DB struct {
+	Host     string
+	Port     string
+	DBName   string
+	User     string
+	Password string
+}
+
+type Server struct {
+	Host              string
+	Port              string
+	ReadTimeout       time.Duration
+	ReadHeaderTimeout time.Duration
+	WriteTimeout      time.Duration
+}
+
 func New(path string) (*Config, error) {
 	configData, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("error while reading config file %s: %w", path, err)
 	}
+
 	var config *Config
 	err = yaml.Unmarshal(configData, &config)
 	if err != nil {

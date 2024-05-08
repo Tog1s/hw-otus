@@ -7,11 +7,11 @@ import (
 	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/config"
 )
 
-type AppLogger struct {
+type Logger struct {
 	logger *slog.Logger
 }
 
-func New(cfg config.Logger, output io.Writer) *AppLogger {
+func New(cfg config.Logger, output io.Writer) *Logger {
 	logLevel := parseLogLevel(cfg.Level)
 	opts := &slog.HandlerOptions{
 		Level: logLevel,
@@ -19,7 +19,7 @@ func New(cfg config.Logger, output io.Writer) *AppLogger {
 	handler := slog.NewJSONHandler(output, opts)
 	logger := slog.New(handler)
 
-	return &AppLogger{
+	return &Logger{
 		logger: logger,
 	}
 }
@@ -38,18 +38,18 @@ func parseLogLevel(level string) slog.Level {
 	return slog.LevelInfo
 }
 
-func (l *AppLogger) Info(msg string) {
+func (l *Logger) Info(msg string) {
 	l.logger.Info(msg)
 }
 
-func (l *AppLogger) Error(msg string) {
+func (l *Logger) Error(msg string) {
 	l.logger.Error(msg)
 }
 
-func (l *AppLogger) Warn(msg string) {
+func (l *Logger) Warn(msg string) {
 	l.logger.Warn(msg)
 }
 
-func (l *AppLogger) Debug(msg string) {
+func (l *Logger) Debug(msg string) {
 	l.logger.Debug(msg)
 }

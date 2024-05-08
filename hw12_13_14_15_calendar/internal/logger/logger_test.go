@@ -8,7 +8,7 @@ import (
 	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/config"
 )
 
-var testString string = "test message string"
+var testMessage string = "test message string"
 
 func TestLogger(t *testing.T) {
 	buffer := &bytes.Buffer{}
@@ -18,29 +18,29 @@ func TestLogger(t *testing.T) {
 	logger := New(cfg, buffer)
 
 	t.Run("test info", func(t *testing.T) {
-		logger.Info(testString)
-		require.Contains(t, buffer.String(), testString)
+		logger.Info(testMessage)
+		require.Contains(t, buffer.String(), testMessage)
 		require.Contains(t, buffer.String(), "INFO")
 	})
 
 	t.Run("test error", func(t *testing.T) {
 		buffer.Reset()
-		logger.Error(testString)
-		require.Contains(t, buffer.String(), testString)
+		logger.Error(testMessage)
+		require.Contains(t, buffer.String(), testMessage)
 		require.Contains(t, buffer.String(), "ERROR")
 	})
 
 	t.Run("test warn", func(t *testing.T) {
 		buffer.Reset()
-		logger.Warn(testString)
-		require.Contains(t, buffer.String(), testString)
+		logger.Warn(testMessage)
+		require.Contains(t, buffer.String(), testMessage)
 		require.Contains(t, buffer.String(), "WARN")
 	})
 
 	t.Run("test debug", func(t *testing.T) {
 		buffer.Reset()
-		logger.Debug(testString)
-		require.Contains(t, buffer.String(), testString)
+		logger.Debug(testMessage)
+		require.Contains(t, buffer.String(), testMessage)
 		require.Contains(t, buffer.String(), "DEBUG")
 	})
 }

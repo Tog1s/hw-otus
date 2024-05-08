@@ -21,7 +21,7 @@ type Event struct {
 	DateTime     time.Time
 	EndTime      time.Time
 	Description  string
-	UserId       int
+	UserID       int
 	NotifyBefore time.Time
 }
 

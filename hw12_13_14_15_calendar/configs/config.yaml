@@ -1,2 +1,17 @@
 logger:
   level: INFO
+  outputPath: ./logs/development.log
+storage:
+  type: memory
+db:
+  host: 127.0.0.1
+  port: 5432
+  dbName: calendar_development
+  user: calendar_development
+  password: calendar_development
+server:
+  host: 127.0.0.1
+  port: 8080
+  readTimeout: 2s
+  ReadHeaderTimeout: 2s
+  writeTimeout: 2s

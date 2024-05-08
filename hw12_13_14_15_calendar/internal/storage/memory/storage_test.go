@@ -17,7 +17,7 @@ func TestStorage(t *testing.T) {
 			DateTime:     time.Now(),
 			EndTime:      time.Now().Add(time.Duration(60)),
 			Description:  "Some task description",
-			UserId:       1,
+			UserID:       1,
 			NotifyBefore: time.Now().Add(time.Duration(3600)),
 		}
 		store := New()

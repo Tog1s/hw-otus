@@ -2,25 +2,44 @@ package app
 
 import (
 	"context"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/storage"
 )
 
-type App struct { // TODO
+type App struct {
+	logger  Logger
+	storage Storage
 }
 
-type Logger interface { // TODO
+type Logger interface {
+	Info(string)
+	Warn(string)
+	Debug(string)
+	Error(string)
 }
 
-type Storage interface { // TODO
+type Storage interface {
+	Create(*storage.Event) error
+	Update(*storage.Event) error
+	Delete(*storage.Event) error
+	DayEventList(time.Time) (map[uuid.UUID]*storage.Event, error)
+	WeekEventList(time.Time) (map[uuid.UUID]*storage.Event, error)
+	MonthEventList(time.Time) (map[uuid.UUID]*storage.Event, error)
 }
 
 func New(logger Logger, storage Storage) *App {
-	return &App{}
+	return &App{
+		logger:  logger,
+		storage: storage,
+	}
 }
 
+//nolint:all
 func (a *App) CreateEvent(ctx context.Context, id, title string) error {
-	// TODO
+	// if err := a.storage.Create(&storage.Event{ID: id, Title: tiitle}); err != nil {
+	// 	return err
+	// }
 	return nil
-	// return a.storage.CreateEvent(storage.Event{ID: id, Title: title})
 }
-
-// TODO

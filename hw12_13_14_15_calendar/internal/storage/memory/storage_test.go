@@ -21,7 +21,7 @@ func TestStorage(t *testing.T) {
 			NotifyBefore: time.Now().Add(time.Duration(3600)),
 		}
 		store := New()
-		err := store.Create(&event)
+		_, err := store.Create(&event)
 		require.NoError(t, err)
 	})
 }

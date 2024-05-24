@@ -15,3 +15,6 @@ server:
   readTimeout: 2s
   ReadHeaderTimeout: 2s
   writeTimeout: 2s
+grpc:
+  host: 127.0.0.1
+  port: 50051

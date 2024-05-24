@@ -13,6 +13,7 @@ type Config struct {
 	Storage Storage
 	DB      DB
 	Server  Server
+	Grpc    Grpc
 }
 
 type Logger struct {
@@ -38,6 +39,11 @@ type Server struct {
 	ReadTimeout       time.Duration
 	ReadHeaderTimeout time.Duration
 	WriteTimeout      time.Duration
+}
+
+type Grpc struct {
+	Host string
+	Port string
 }
 
 func New(path string) (*Config, error) {

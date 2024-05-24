@@ -36,12 +36,10 @@ func NewServer(logger Logger, app Application, host, port string) *Server {
 		port:   port,
 		app:    app,
 	}
-	router := http.NewServeMux()
-	router.HandleFunc("/", index)
-	loggedRouter := loggingMiddleware(router, s.logger)
+	router := newRouter(s.app, s.logger)
 	s.server = http.Server{
 		Addr:              net.JoinHostPort(s.host, s.port),
-		Handler:           loggedRouter,
+		Handler:           router,
 		ReadHeaderTimeout: time.Second * 90,
 	}
 	return s
@@ -59,9 +57,4 @@ func (s *Server) Start(ctx context.Context) error {
 func (s *Server) Stop(ctx context.Context) error {
 	s.server.Shutdown(ctx)
 	return nil
-}
-
-func index(w http.ResponseWriter, _ *http.Request) {
-	w.Write([]byte("Index page\n"))
-	w.WriteHeader(200)
 }

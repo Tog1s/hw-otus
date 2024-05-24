@@ -20,7 +20,7 @@ message Event {
 service EventService {
     rpc Create(CreateRequest) returns (CreateResponse) {}
     rpc Update(UpdateRequest) returns (UpdateResponse) {}
-    rpc Delete(DeleteRequest) returns (UpdateResponse) {} 
+    rpc Delete(DeleteRequest) returns (DeleteResponse) {} 
 
     rpc DayEventList(GetListRequest) returns (EventsResponse) {}
     rpc WeekEventList(GetListRequest) returns (EventsResponse) {}

@@ -6,6 +6,8 @@ import (
 	"net"
 	"net/http"
 	"time"
+
+	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/storage"
 )
 
 type Server struct {
@@ -24,7 +26,7 @@ type Logger interface {
 }
 
 type Application interface {
-	CreateEvent(context.Context, string, string) error
+	CreateEvent(*storage.Event) (*storage.Event, error)
 }
 
 func NewServer(logger Logger, app Application, host, port string) *Server {

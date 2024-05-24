@@ -4,14 +4,17 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
 	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/app"
 	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/config"
 	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/logger"
+	internalgrpc "github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/server/grpc"
 	internalhttp "github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/server/http"
 	memorystorage "github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/storage/memory"
 )
@@ -40,10 +43,17 @@ func main() {
 	calendar := app.New(logg, storage)
 	server := internalhttp.NewServer(logg, calendar, cfg.Server.Host, cfg.Server.Port)
 
+	grpcServer := internalgrpc.New(logg, calendar, cfg.Grpc.Host, cfg.Grpc.Port)
+	if err != nil {
+		log.Fatalf("init grpc server: %s", err)
+	}
+
 	ctx, cancel := signal.NotifyContext(context.Background(),
 		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
 
+	wg := sync.WaitGroup{}
+	wg.Add(3)
 	go func() {
 		<-ctx.Done()
 
@@ -55,6 +65,15 @@ func main() {
 		}
 	}()
 
+	go func() {
+		defer wg.Done()
+
+		if err = grpcServer.Start(); err != nil {
+			logg.Error("failed to start grpc server: " + err.Error())
+			cancel()
+		}
+	}()
+
 	logg.Info("calendar is running...")
 
 	if err := server.Start(ctx); err != nil {
@@ -62,4 +81,21 @@ func main() {
 		cancel()
 		os.Exit(1) //nolint:gocritic
 	}
+
+	go func() {
+		defer wg.Done()
+		<-ctx.Done()
+
+		if err = server.Stop(ctx); err != nil {
+			logg.Error("failed to stop http server: " + err.Error())
+		}
+
+		if err = grpcServer.Stop(); err != nil {
+			logg.Error("failed to stop grpc server: " + err.Error())
+		}
+
+		logg.Info("calendar has stopped...")
+	}()
+
+	wg.Wait()
 }

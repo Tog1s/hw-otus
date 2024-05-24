@@ -26,7 +26,7 @@ func NewService(app Application, logger Logger) *Service {
 	}
 }
 
-func (s *Service) Create(ctx context.Context, request *pb.CreateRequest) (*pb.CreateResponse, error) {
+func (s *Service) Create(_ context.Context, request *pb.CreateRequest) (*pb.CreateResponse, error) {
 	storageEvent, err := makeEvent(request.Event)
 	if err != nil {
 		return nil, err
@@ -105,7 +105,7 @@ func makeEvent(e *pb.Event) (*storage.Event, error) {
 		return nil, fmt.Errorf("unable to parse event id from request: %w", err)
 	}
 
-	userId, err := strconv.Atoi(e.UserId)
+	userID, err := strconv.Atoi(e.UserId)
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse user id from request: %w", err)
 	}
@@ -116,21 +116,20 @@ func makeEvent(e *pb.Event) (*storage.Event, error) {
 			DateTime:     e.Datetime.AsTime(),
 			EndTime:      e.Endtime.AsTime(),
 			Description:  e.Description,
-			UserID:       userId,
+			UserID:       userID,
 			NotifyBefore: e.NotifyBefore.AsTime(),
 		},
 		nil
 }
 
 func makePbEvent(e *storage.Event) *pb.Event {
-	userId := strconv.Itoa(e.UserID)
 	return &pb.Event{
 		Id:           e.ID.String(),
 		Title:        e.Title,
 		Datetime:     timestamppb.New(e.DateTime),
 		Endtime:      timestamppb.New(e.EndTime),
 		Description:  e.Description,
-		UserId:       userId,
+		UserId:       strconv.Itoa(e.UserID),
 		NotifyBefore: timestamppb.New(e.NotifyBefore),
 	}
 }

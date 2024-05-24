@@ -52,8 +52,7 @@ func (a *App) UpdateEvent(e *storage.Event) (*storage.Event, error) {
 }
 
 func (a *App) DeleteEvent(e *storage.Event) error {
-	err := a.storage.Delete(e)
-	if err != nil {
+	if err := a.storage.Delete(e); err != nil {
 		return err
 	}
 	return nil
@@ -73,7 +72,6 @@ func (a *App) WeekEventList(day time.Time) (map[uuid.UUID]*storage.Event, error)
 		return nil, err
 	}
 	return events, nil
-
 }
 
 func (a *App) MonthEventList(day time.Time) (map[uuid.UUID]*storage.Event, error) {

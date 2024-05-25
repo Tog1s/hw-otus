@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/storage"
 )
 
@@ -27,6 +28,11 @@ type Logger interface {
 
 type Application interface {
 	CreateEvent(*storage.Event) (*storage.Event, error)
+	UpdateEvent(*storage.Event) (*storage.Event, error)
+	DeleteEvent(*storage.Event) error
+	DayEventList(time.Time) (map[uuid.UUID]*storage.Event, error)
+	WeekEventList(time.Time) (map[uuid.UUID]*storage.Event, error)
+	MonthEventList(time.Time) (map[uuid.UUID]*storage.Event, error)
 }
 
 func NewServer(logger Logger, app Application, host, port string) *Server {

@@ -26,16 +26,17 @@ func init() {
 func main() {
 	flag.Parse()
 
-	// if flag.Arg(0) == "version" {
-	// 	printVersion()
-	// 	return
-	// }
+	if flag.Arg(0) == "version" {
+		printVersion()
+		return
+	}
 
 	cfg, err := config.New(configFile)
 	if err != nil {
 		fmt.Println(err)
 	}
 
+	//nolint:gofumpt
 	logFile, err := os.OpenFile(cfg.Logger.Output, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
 	if err != nil {
 		panic(err)
@@ -47,9 +48,6 @@ func main() {
 	calendar := app.New(logg, storage)
 	server := internalhttp.NewServer(logg, calendar, cfg.Server.Host, cfg.Server.Port)
 	grpcServer := internalgrpc.New(logg, calendar, cfg.Grpc.Host, cfg.Grpc.Port)
-	if err != nil {
-		log.Fatalf("init grpc server: %s", err)
-	}
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
@@ -95,7 +93,6 @@ func main() {
 		if err = grpcServer.Stop(); err != nil {
 			logg.Error("failed to stop grpc server: " + err.Error())
 		}
-
 	}()
 	wg.Wait()
 	logg.Info("calendar has stopped...")

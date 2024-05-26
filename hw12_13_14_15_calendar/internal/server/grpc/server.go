@@ -46,6 +46,7 @@ func New(logger Logger, app Application, host, port string) *Server {
 		port:   port,
 		logger: logger,
 		app:    app,
+		server: server,
 	}
 	return s
 }
@@ -53,11 +54,16 @@ func New(logger Logger, app Application, host, port string) *Server {
 func (s *Server) Start() error {
 	listener, err := net.Listen("tcp", net.JoinHostPort(s.host, s.port))
 	if err != nil {
-		return err
+		fmt.Println("unable to create listener", err)
+		panic(err)
 	}
 
 	s.logger.Info(fmt.Sprintf("GRPC-server %s:%s starting", s.host, s.port))
-	return s.server.Serve(listener)
+	if err = s.server.Serve(listener); err != nil {
+		fmt.Println("unable to start grpc-server", err)
+		panic(err)
+	}
+	return nil
 }
 
 func (s *Server) Stop() error {

@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/storage"
 )
 
@@ -12,9 +13,15 @@ type Handler struct {
 	App Application
 }
 
-type JSONResponse struct {
+type IDResponse struct {
 	ID string
 }
+
+type SuccessResponse struct {
+	Success bool
+}
+
+type EventListResponse map[uuid.UUID]*storage.Event
 
 func (h *Handler) index(w http.ResponseWriter, _ *http.Request) {
 	w.Write([]byte("Index page\n"))
@@ -23,11 +30,11 @@ func (h *Handler) index(w http.ResponseWriter, _ *http.Request) {
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
-	defer r.Body.Close()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	defer r.Body.Close()
 
 	request, err := parseJSON(body)
 	if err != nil {
@@ -42,7 +49,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	err = responseWithJSON(w, JSONResponse{ID: event.ID.String()})
+	err = responseWithJSON(w, IDResponse{ID: event.ID.String()})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -51,11 +58,11 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
-	defer r.Body.Close()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	defer r.Body.Close()
 
 	request, err := parseJSON(body)
 	if err != nil {
@@ -63,28 +70,27 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	event, err := h.App.UpdateEvent(request)
+	_, err = h.App.UpdateEvent(request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	err = responseWithJSON(w, JSONResponse{ID: event.ID.String()})
+	err = responseWithJSON(w, SuccessResponse{Success: true})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 }
 
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
-	defer r.Body.Close()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	defer r.Body.Close()
 
 	request, err := parseJSON(body)
 	if err != nil {
@@ -98,7 +104,7 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	err = responseWithJSON(w, JSONResponse{})
+	err = responseWithJSON(w, SuccessResponse{Success: true})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -107,11 +113,11 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) DayEventList(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
-	defer r.Body.Close()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	defer r.Body.Close()
 
 	request, err := parseJSON(body)
 	if err != nil {
@@ -135,11 +141,11 @@ func (h *Handler) DayEventList(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) WeekEventList(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
-	defer r.Body.Close()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	defer r.Body.Close()
 
 	request, err := parseJSON(body)
 	if err != nil {
@@ -163,11 +169,11 @@ func (h *Handler) WeekEventList(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) MonthEventList(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
-	defer r.Body.Close()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	defer r.Body.Close()
 
 	request, err := parseJSON(body)
 	if err != nil {

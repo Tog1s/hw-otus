@@ -8,8 +8,6 @@ import (
 	"os"
 	"os/signal"
 	"sync"
-	"syscall"
-	"time"
 
 	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/app"
 	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/config"
@@ -28,74 +26,77 @@ func init() {
 func main() {
 	flag.Parse()
 
-	if flag.Arg(0) == "version" {
-		printVersion()
-		return
-	}
+	// if flag.Arg(0) == "version" {
+	// 	printVersion()
+	// 	return
+	// }
 
 	cfg, err := config.New(configFile)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	logg := logger.New(cfg.Logger, os.Stdout)
+	logFile, err := os.OpenFile(cfg.Logger.Output, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+	if err != nil {
+		panic(err)
+	}
+	defer logFile.Close()
+	logg := logger.New(cfg.Logger, logFile)
+
 	storage := memorystorage.New()
 	calendar := app.New(logg, storage)
 	server := internalhttp.NewServer(logg, calendar, cfg.Server.Host, cfg.Server.Port)
-
 	grpcServer := internalgrpc.New(logg, calendar, cfg.Grpc.Host, cfg.Grpc.Port)
 	if err != nil {
 		log.Fatalf("init grpc server: %s", err)
 	}
 
-	ctx, cancel := signal.NotifyContext(context.Background(),
-		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
+
+	defer func(file *os.File) {
+		err = file.Close()
+		if err != nil {
+			log.Fatalf("error closing log file %s", err)
+		}
+	}(logFile)
 
 	wg := sync.WaitGroup{}
 	wg.Add(3)
+	logg.Info("calendar is running...")
+
+	// Run HTTP Server
 	go func() {
-		<-ctx.Done()
-
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-		defer cancel()
-
-		if err := server.Stop(ctx); err != nil {
-			logg.Error("failed to stop http server: " + err.Error())
+		defer wg.Done()
+		if err := server.Start(ctx); err != nil {
+			logg.Error("failed to start http server: " + err.Error())
+			cancel()
 		}
 	}()
 
+	// Run GRPC Server
 	go func() {
 		defer wg.Done()
-
 		if err = grpcServer.Start(); err != nil {
 			logg.Error("failed to start grpc server: " + err.Error())
 			cancel()
 		}
 	}()
 
-	logg.Info("calendar is running...")
-
-	if err := server.Start(ctx); err != nil {
-		logg.Error("failed to start http server: " + err.Error())
-		cancel()
-		os.Exit(1) //nolint:gocritic
-	}
-
+	// Stop all servers
 	go func() {
 		defer wg.Done()
 		<-ctx.Done()
 
 		if err = server.Stop(ctx); err != nil {
-			logg.Error("failed to stop http server: " + err.Error())
+			log.Println("failed to stop http server: " + err.Error())
 		}
 
 		if err = grpcServer.Stop(); err != nil {
 			logg.Error("failed to stop grpc server: " + err.Error())
 		}
 
-		logg.Info("calendar has stopped...")
 	}()
-
 	wg.Wait()
+	logg.Info("calendar has stopped...")
 }

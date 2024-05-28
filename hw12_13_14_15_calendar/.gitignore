@@ -1,2 +1,5 @@
 logs/
 bin/
+
+deployments/postgres-data/
+deployments/rabbitmq-data/

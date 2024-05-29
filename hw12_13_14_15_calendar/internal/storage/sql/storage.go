@@ -17,8 +17,8 @@ type Storage struct {
 	db  *sqlx.DB
 }
 
-func New(ctx context.Context) *Storage {
-	return &Storage{ctx: ctx}
+func New() *Storage {
+	return &Storage{}
 }
 
 func (s *Storage) Connect(ctx context.Context, dsn string) error {

@@ -1,6 +1,7 @@
 logger:
   level: INFO
-  output: logs/development.log
+  # output: logs/development.log
+  output: stdout
 storage:
   type: memory
 db:

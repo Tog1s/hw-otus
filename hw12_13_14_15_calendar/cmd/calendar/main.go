@@ -15,9 +15,11 @@ import (
 	internalgrpc "github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/server/grpc"
 	internalhttp "github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/server/http"
 	memorystorage "github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/storage/memory"
+	sqlstorage "github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/storage/sql"
 )
 
 var configFile string
+var logFile *os.File
 
 func init() {
 	flag.StringVar(&configFile, "config", "/etc/calendar/config.yaml", "Path to configuration file")
@@ -36,20 +38,19 @@ func main() {
 		fmt.Println(err)
 	}
 
-	//nolint:gofumpt
-	logFile, err := os.OpenFile(cfg.Logger.Output, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+	logg := initLogger(cfg)
+
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+
+	storage, err := initStorage(cfg, ctx)
 	if err != nil {
 		panic(err)
 	}
-	defer logFile.Close()
-	logg := logger.New(cfg.Logger, logFile)
 
-	storage := memorystorage.New()
 	calendar := app.New(logg, storage)
 	server := internalhttp.NewServer(logg, calendar, cfg.Server.Host, cfg.Server.Port)
 	grpcServer := internalgrpc.New(logg, calendar, cfg.Grpc.Host, cfg.Grpc.Port)
 
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
 	defer func(file *os.File) {
@@ -96,4 +97,38 @@ func main() {
 	}()
 	wg.Wait()
 	logg.Info("calendar has stopped...")
+}
+
+func initStorage(cfg *config.Config, ctx context.Context) (app.Storage, error) {
+	if cfg.Storage.Type == "sql" {
+		dsn := fmt.Sprintf(
+			"postgres://%s:%s@%s:%v/%s?sslmode=disable",
+			cfg.DB.User,
+			cfg.DB.Password,
+			cfg.DB.Host,
+			cfg.DB.Port,
+			cfg.DB.DBName,
+		)
+		storage := sqlstorage.New()
+		err := storage.Connect(ctx, dsn)
+		if err != nil {
+			return nil, err
+		}
+	}
+	storage := memorystorage.New()
+	return storage, nil
+}
+
+func initLogger(cfg *config.Config) app.Logger {
+	if cfg.Logger.Output != "stdout" {
+		//nolint:gofumpt
+		logFile, err := os.OpenFile(cfg.Logger.Output, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+		if err != nil {
+			panic(err)
+		}
+		defer logFile.Close()
+		return logger.New(cfg.Logger, logFile)
+	}
+
+	return logger.New(cfg.Logger, os.Stdout)
 }

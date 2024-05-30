@@ -1,0 +1,142 @@
+{
+	"info": {
+		"_postman_id": "9c5cd56c-b9d7-44b2-8162-28698e0deb02",
+		"name": "CalendarAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "35371446"
+	},
+	"item": [
+		{
+			"name": "root",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:3000/"
+			},
+			"response": []
+		},
+		{
+			"name": "create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"ID\": \"d10c2cfc-2ee3-4efb-927d-f09932d05859\",\n    \"title\": \"learn ruby\",\n    \"DateTime\": \"2024-05-30T15:04:05Z\",\n    \"EndTime\": \"2024-05-30T15:04:05Z\",\n    \"Description\": \"Some description\",\n    \"User_ID\": 1,\n    \"NotifyBefore\": \"2024-05-30T15:04:05Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:3000/create"
+			},
+			"response": []
+		},
+		{
+			"name": "update",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"ID\": \"d10c2cfc-2ee3-4efb-927d-f09932d05859\",\n    \"title\": \"learn go\",\n    \"DateTime\": \"2024-05-30T15:04:05Z\",\n    \"EndTime\": \"2024-05-30T15:04:05Z\",\n    \"Description\": \"Some description\",\n    \"User_ID\": 1,\n    \"NotifyBefore\": \"2024-05-30T15:04:05Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:3000/update"
+			},
+			"response": []
+		},
+		{
+			"name": "dayeventlist",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"DateTime\": \"2024-05-30T00:00:00Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:3000/dayeventlist"
+			},
+			"response": []
+		},
+		{
+			"name": "weekeventlist",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"DateTime\": \"2024-05-30T00:00:00Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:3000/weekeventlist"
+			},
+			"response": []
+		},
+		{
+			"name": "montheventlist",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"DateTime\": \"2024-05-29T00:00:00Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:3000/montheventlist"
+			},
+			"response": []
+		},
+		{
+			"name": "delete",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"ID\": \"d10c2cfc-2ee3-4efb-927d-f09932d05859\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:3000/delete"
+			},
+			"response": []
+		}
+	]
+}

@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"sync"
 
 	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/app"
@@ -18,8 +19,10 @@ import (
 	sqlstorage "github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/storage/sql"
 )
 
-var configFile string
-var logFile *os.File
+var (
+	configFile string
+	logFile    *os.File
+)
 
 func init() {
 	flag.StringVar(&configFile, "config", "/etc/calendar/config.yaml", "Path to configuration file")
@@ -121,6 +124,16 @@ func initStorage(cfg *config.Config, ctx context.Context) (app.Storage, error) {
 
 func initLogger(cfg *config.Config) app.Logger {
 	if cfg.Logger.Output != "stdout" {
+		//nolint:gofumpt
+		if _, err := os.Stat(cfg.Logger.Output); os.IsNotExist(err) {
+			os.MkdirAll(filepath.Dir(cfg.Logger.Output), 0750)
+			f, err := os.Create(cfg.Logger.Output)
+			if err != nil {
+				fmt.Println(err)
+			}
+			f.Close()
+		}
+
 		//nolint:gofumpt
 		logFile, err := os.OpenFile(cfg.Logger.Output, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
 		if err != nil {

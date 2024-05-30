@@ -30,7 +30,7 @@ build-img:
 		-f build/Dockerfile .
 
 run-img: build-img
-	docker run $(DOCKER_IMG)
+	docker run --expose 3000 $(DOCKER_IMG)
 
 version: build
 	$(BIN) version

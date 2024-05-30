@@ -18,8 +18,10 @@ import (
 	memorystorage "github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/storage/memory"
 )
 
-var configFile string
-var logFile *os.File
+var (
+	configFile string
+	logFile    *os.File
+)
 
 func init() {
 	flag.StringVar(&configFile, "config", "/etc/calendar/config.yaml", "Path to configuration file")
@@ -96,8 +98,7 @@ func main() {
 
 func initLogger(cfg *config.Config) app.Logger {
 	if cfg.Logger.Output != "stdout" {
-
-		// Make directories
+		//nolint:gofumpt
 		if _, err := os.Stat(cfg.Logger.Output); os.IsNotExist(err) {
 			os.MkdirAll(filepath.Dir(cfg.Logger.Output), 0750)
 			f, err := os.Create(cfg.Logger.Output)
@@ -115,6 +116,5 @@ func initLogger(cfg *config.Config) app.Logger {
 		// defer logFile.Close()
 		return logger.New(cfg.Logger, logFile)
 	}
-
 	return logger.New(cfg.Logger, os.Stdout)
 }

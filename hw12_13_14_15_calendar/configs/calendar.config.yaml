@@ -11,11 +11,11 @@ db:
   user: calendar_development
   password: calendar_development
 server:
-  host: 'localhost'
+  host: '0.0.0.0'
   port: '3000'
   readTimeout: 2s
   ReadHeaderTimeout: 2s
   writeTimeout: 2s
 grpc:
-  host: 'localhost'
+  host: '0.0.0.0'
   port: '50051'

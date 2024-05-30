@@ -45,7 +45,7 @@ func main() {
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 
-	storage, err := initStorage(cfg, ctx)
+	storage, err := initStorage(ctx, cfg)
 	if err != nil {
 		panic(err)
 	}
@@ -102,7 +102,7 @@ func main() {
 	logg.Info("calendar has stopped...")
 }
 
-func initStorage(cfg *config.Config, ctx context.Context) (app.Storage, error) {
+func initStorage(ctx context.Context, cfg *config.Config) (app.Storage, error) {
 	if cfg.Storage.Type == "sql" {
 		dsn := fmt.Sprintf(
 			"postgres://%s:%s@%s:%v/%s?sslmode=disable",

@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"sync"
 
 	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/app"
@@ -18,6 +19,7 @@ import (
 )
 
 var configFile string
+var logFile *os.File
 
 func init() {
 	flag.StringVar(&configFile, "config", "/etc/calendar/config.yaml", "Path to configuration file")
@@ -36,13 +38,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	//nolint:gofumpt
-	logFile, err := os.OpenFile(cfg.Logger.Output, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
-	if err != nil {
-		panic(err)
-	}
-	defer logFile.Close()
-	logg := logger.New(cfg.Logger, logFile)
+	logg := initLogger(cfg)
 
 	storage := memorystorage.New()
 	calendar := app.New(logg, storage)
@@ -96,4 +92,29 @@ func main() {
 	}()
 	wg.Wait()
 	logg.Info("calendar has stopped...")
+}
+
+func initLogger(cfg *config.Config) app.Logger {
+	if cfg.Logger.Output != "stdout" {
+
+		// Make directories
+		if _, err := os.Stat(cfg.Logger.Output); os.IsNotExist(err) {
+			os.MkdirAll(filepath.Dir(cfg.Logger.Output), 0750)
+			f, err := os.Create(cfg.Logger.Output)
+			if err != nil {
+				fmt.Println(err)
+			}
+			f.Close()
+		}
+
+		//nolint:gofumpt
+		logFile, err := os.OpenFile(cfg.Logger.Output, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+		if err != nil {
+			panic(err)
+		}
+		// defer logFile.Close()
+		return logger.New(cfg.Logger, logFile)
+	}
+
+	return logger.New(cfg.Logger, os.Stdout)
 }

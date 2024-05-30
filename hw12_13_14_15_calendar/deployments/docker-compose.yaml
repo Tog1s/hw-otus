@@ -21,4 +21,5 @@ services:
     depends_on:
       - pg
     ports:
-      - 8080:8080
+      - 3000:3000
+      - 50051:50051

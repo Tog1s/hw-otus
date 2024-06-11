@@ -7,8 +7,8 @@ import (
 )
 
 type Storage interface {
-	Create(event *Event) error
-	Update(event *Event) error
+	Create(event *Event) (*Event, error)
+	Update(event *Event) (*Event, error)
 	Delete(event *Event) error
 	DayEventList()
 	WeekEventList()

@@ -6,6 +6,9 @@ import (
 	"net"
 	"net/http"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/tog1s/hw-otus/hw12_13_14_15_calendar/internal/storage"
 )
 
 type Server struct {
@@ -24,7 +27,12 @@ type Logger interface {
 }
 
 type Application interface {
-	CreateEvent(context.Context, string, string) error
+	CreateEvent(*storage.Event) (*storage.Event, error)
+	UpdateEvent(*storage.Event) (*storage.Event, error)
+	DeleteEvent(*storage.Event) error
+	DayEventList(time.Time) (map[uuid.UUID]*storage.Event, error)
+	WeekEventList(time.Time) (map[uuid.UUID]*storage.Event, error)
+	MonthEventList(time.Time) (map[uuid.UUID]*storage.Event, error)
 }
 
 func NewServer(logger Logger, app Application, host, port string) *Server {
@@ -34,12 +42,10 @@ func NewServer(logger Logger, app Application, host, port string) *Server {
 		port:   port,
 		app:    app,
 	}
-	router := http.NewServeMux()
-	router.HandleFunc("/", index)
-	loggedRouter := loggingMiddleware(router, s.logger)
+	router := newRouter(s.app, s.logger)
 	s.server = http.Server{
 		Addr:              net.JoinHostPort(s.host, s.port),
-		Handler:           loggedRouter,
+		Handler:           router,
 		ReadHeaderTimeout: time.Second * 90,
 	}
 	return s
@@ -57,9 +63,4 @@ func (s *Server) Start(ctx context.Context) error {
 func (s *Server) Stop(ctx context.Context) error {
 	s.server.Shutdown(ctx)
 	return nil
-}
-
-func index(w http.ResponseWriter, _ *http.Request) {
-	w.Write([]byte("Index page\n"))
-	w.WriteHeader(200)
 }

@@ -25,28 +25,28 @@ func New() *Storage {
 	}
 }
 
-func (s *Storage) Create(e *storage.Event) error {
+func (s *Storage) Create(e *storage.Event) (*storage.Event, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	if _, ok := s.events[e.ID]; ok {
-		return ErrEventAlreadyExist
+		return nil, ErrEventAlreadyExist
 	}
 
 	s.events[e.ID] = e
-	return nil
+	return e, nil
 }
 
-func (s *Storage) Update(e *storage.Event) error {
+func (s *Storage) Update(e *storage.Event) (*storage.Event, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	if s.events[e.ID] == nil {
-		return ErrEventNotFound
+		return nil, ErrEventNotFound
 	}
 
 	s.events[e.ID] = e
-	return nil
+	return e, nil
 }
 
 func (s *Storage) Delete(e *storage.Event) error {
